@@ -44,6 +44,17 @@ public class PatientService {
         return patient;
     }
 
+    public Patient UpdatePatient(long id,Patient patient)
+    {
+        Patient updatedPatient = null;
+        Optional<Patient> existingPatient = repository.findById(id);
+        if(existingPatient.isPresent())
+        {
+            repository.save(patient);
+            updatedPatient = patient;
+        }
+        return updatedPatient;
+    }
     public Patient DeletePatient(long patientId)
     {
         var patient = GetPatient(patientId);

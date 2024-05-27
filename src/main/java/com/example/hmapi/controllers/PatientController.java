@@ -34,6 +34,12 @@ public class PatientController {
         return patient;
     }
 
+    @PutMapping("/{patientId}")
+    public Patient UpdatePatient(@PathVariable long patientId, @RequestBody Patient patient)
+    {
+        return _service.UpdatePatient(patientId,patient);
+    }
+
     @DeleteMapping("/{patientId}")
     public Patient DeletePatient(@PathVariable long patientId)
     {
