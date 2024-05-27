@@ -20,30 +20,27 @@ public class DoctorController {
     private DoctorService service;
 
     @GetMapping
-    public ResponseEntity<APIResponse> GetDoctors()
+    public ResponseEntity<APIResponse<List<Doctor>>> GetDoctors()
     {
         List<Doctor> doctors = service.GetDoctors();
         return ResponseEntity.ok(APIResponse.Success(doctors));
     }
     @GetMapping("/{id}")
-    public ResponseEntity<APIResponse> GetDoctor(@PathVariable UUID id)
+    public ResponseEntity<APIResponse<Doctor>> GetDoctor(@PathVariable UUID id)
     {
         Optional<Doctor> getDoctor = Optional.ofNullable(service.GetDoctor(id));
-        if(getDoctor.isPresent())
-            return ResponseEntity.ok(APIResponse.Success(getDoctor.get(),null));
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(APIResponse.Fail("doctor not found"));
+        return getDoctor.map(doctor -> ResponseEntity.ok(APIResponse.Success(doctor, null))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(APIResponse.Fail("doctor not found")));
     }
 
     @PostMapping
-    public APIResponse CreateDoctor(@RequestBody Doctor doctor)
+    public APIResponse<Doctor> CreateDoctor(@RequestBody Doctor doctor)
     {
         Doctor created = service.CreateDoctor(doctor);
         return APIResponse.Success(created,"record created");
     }
 
     @PutMapping("/{doctorId}")
-    public ResponseEntity<APIResponse> UpdateDoctor(@PathVariable UUID doctorId, @RequestBody Doctor doctor)
+    public ResponseEntity<APIResponse<Doctor>> UpdateDoctor(@PathVariable UUID doctorId, @RequestBody Doctor doctor)
     {
         Doctor updatedDoctor = service.UpdateDoctor(doctor);
         if(updatedDoctor == null)
