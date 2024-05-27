@@ -1,5 +1,6 @@
 package com.example.hmapi.controllers;
 
+import com.example.hmapi.models.APIResponse;
 import com.example.hmapi.models.Doctor;
 import com.example.hmapi.services.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,35 +20,35 @@ public class DoctorController {
     private DoctorService service;
 
     @GetMapping
-    public ResponseEntity<List<Doctor>> GetDoctors()
+    public ResponseEntity<APIResponse> GetDoctors()
     {
         List<Doctor> doctors = service.GetDoctors();
-        return ResponseEntity.ok(doctors);
+        return ResponseEntity.ok(APIResponse.Success(doctors));
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Doctor> GetDoctor(@PathVariable UUID id)
+    public ResponseEntity<APIResponse> GetDoctor(@PathVariable UUID id)
     {
         Optional<Doctor> getDoctor = Optional.ofNullable(service.GetDoctor(id));
         if(getDoctor.isPresent())
-            return ResponseEntity.ok(getDoctor.get());
+            return ResponseEntity.ok(APIResponse.Success(getDoctor.get(),null));
         else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(APIResponse.Fail("doctor not found"));
     }
 
     @PostMapping
-    public Doctor CreateDoctor(@RequestBody Doctor doctor)
+    public APIResponse CreateDoctor(@RequestBody Doctor doctor)
     {
         Doctor created = service.CreateDoctor(doctor);
-        return created;
+        return APIResponse.Success(created,"record created");
     }
 
     @PutMapping("/{doctorId}")
-    public ResponseEntity<Doctor> UpdateDoctor(@PathVariable UUID doctorId, @RequestBody Doctor doctor)
+    public ResponseEntity<APIResponse> UpdateDoctor(@PathVariable UUID doctorId, @RequestBody Doctor doctor)
     {
         Doctor updatedDoctor = service.UpdateDoctor(doctor);
         if(updatedDoctor == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(APIResponse.Fail("doctor not found"));
         else
-            return ResponseEntity.ok(updatedDoctor);
+            return ResponseEntity.ok(APIResponse.Success(updatedDoctor,"record updated"));
     }
 }
