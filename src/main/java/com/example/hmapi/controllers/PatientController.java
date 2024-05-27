@@ -3,10 +3,8 @@ package com.example.hmapi.controllers;
 import com.example.hmapi.models.Patient;
 import com.example.hmapi.services.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,6 +20,7 @@ public class PatientController {
         var result = _service.GetPatients();
         return result;
     }
+
     @GetMapping("/{patientId}")
     public Patient GetPatient(@PathVariable long patientId)
     {
